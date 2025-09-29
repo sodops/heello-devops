@@ -1,7 +1,7 @@
 name: Python Ci
 on: [push]
 jobs:
-    build:
+    python-check:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout repository
@@ -19,4 +19,12 @@ jobs:
             - name: Test Flask app sintax
               run: |
                 python -c "from main import app; print('Flask app imported successfully!')"
+    docker-build:
+        runs-on: ubuntu-latest
+        needs: python-check
+        steps:
+            - name: Docker build
+              run: |
+                docker build -t heello-devops .
+                docker run --rm heello-devops python -c "from main import app; print('Flask app imported successfully in Docker!')"
 
