@@ -1,4 +1,4 @@
-name: Python Ci
+name: Docker CI/CD
 on: [push]
 jobs:
     python-check:
@@ -26,8 +26,15 @@ jobs:
             - name: Checkout repository
               uses: actions/checkout@v4
             
-            - name: Docker build
-              run: |
-                docker build -t heello-devops .
-                docker run --rm heello-devops python -c "from main import app; print('Flask app imported successfully in Docker!')"
+            - name: Login into DockerHub
+              uses: docker/login-action@v2
+              with:
+                username: ${{ secrets.DOCKER_USERNAME }}
+                password: ${{ secrets.DOCKER_PASSWORD }}
+            - name: Build and Push Docker image
+              uses: docker/build-push-action@v4
+              with:
+                context: .
+                push: true
+                tags: ${{ secrets.DOCKER_USERNAME }}/heello-devops:latest
 
